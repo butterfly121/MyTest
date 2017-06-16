@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" ignored="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default Suite" duration-ms="173351" started-at="2017-06-15T03:20:15Z" finished-at="2017-06-15T03:23:09Z">
+    <groups>
+    </groups>
+    <test name="MyTest" duration-ms="173351" started-at="2017-06-15T03:20:15Z" finished-at="2017-06-15T03:23:09Z">
+      <class name="TestThinvent.com.FinalInquiries">
+        <test-method status="PASS" signature="setUp()[pri:0, instance:TestThinvent.com.FinalInquiries@5b464ce8]" name="setUp" is-config="true" duration-ms="8468" started-at="2017-06-15T11:20:15Z" finished-at="2017-06-15T11:20:24Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method status="PASS" signature="Inquiries()[pri:0, instance:TestThinvent.com.FinalInquiries@5b464ce8]" name="Inquiries" duration-ms="164582" started-at="2017-06-15T11:20:24Z" finished-at="2017-06-15T11:23:08Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- Inquiries -->
+        <test-method status="PASS" signature="tearDown()[pri:0, instance:TestThinvent.com.FinalInquiries@5b464ce8]" name="tearDown" is-config="true" duration-ms="284" started-at="2017-06-15T11:23:08Z" finished-at="2017-06-15T11:23:09Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- TestThinvent.com.FinalInquiries -->
+    </test> <!-- MyTest -->
+  </suite> <!-- Default Suite -->
+</testng-results>

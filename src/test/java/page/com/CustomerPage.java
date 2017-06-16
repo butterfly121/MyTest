@@ -1,11 +1,12 @@
-package TestThinvent.com;
+package page.com;
 
 import org.apache.regexp.RE;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.junit.Ignore;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
+
+import static org.testng.Assert.assertEquals;
 
 /**
  * Created by xhm on 2017/6/7.
@@ -61,10 +62,18 @@ public class CustomerPage {
         public static final String CONTANCT_LABLE_XPATH="//*[@id='form1']/div[3]/div[3]/div/div[2]/div/ul/li[2]/a";
         public static final String CONTANCT_BEN_XPATH="//*[@id='btnAdd']";
         public static final String CONTANCT_IFRAME_XPATH="zeromodal-frame";
-
-
-
-
+        //管理机构
+        public static final String ORG_XPATH="//*[@id='side-menu']/li[4]/ul/li[2]/a";
+        public static final String ORG_FRAME_XPATH="//*[@id='page32']";
+        //咨设机构
+        public static final String ORG1_XPATH="//*[@id='side-menu']/li[4]/ul/li[3]/a";
+        public static final String ORG1_FRAME_XPATH="//*[@id='page33']";
+        //招标代理
+        public static final String ORG2_XPATH="//*[@id='side-menu']/li[4]/ul/li[4]/a";
+        public static final String ORG2_FRAME_XPATH="//*[@id='page34']";
+        //上下友商
+        public static final String ORG3_XPATH="//*[@id='side-menu']/li[4]/ul/li[5]/a";
+        public static final String ORG3_FRAME_XPATH="//*[@id='page35']";
     }
     private WebDriver driver;
     private String url;
@@ -72,6 +81,9 @@ public class CustomerPage {
         this.driver=driver;
         this.url=url;
         this.driver.get(url);
+        //谷歌浏览器版本太高，最大化的方法无效果
+//        this.driver.manage().window().maximize();
+        this.driver.manage().window().setSize(new Dimension(1920,1080));
     }
     //登录
     public void login(String username,String password){
@@ -84,15 +96,17 @@ public class CustomerPage {
         this.driver.findElement(By.id((getElement.LOGIN_BUTTON_ID))).click();
     }
     //找到最终客户
-    public void Final_page() throws Exception{
-        this.driver.findElement(By.xpath(getElement.CUSTOM_XPATH)).click();
-        Thread.sleep(2000);
-        this.driver.findElement(By.xpath(getElement.FINAL_XPATH)).click();
+    public void Final_page(String finalXpath,boolean isFirst) throws Exception{
+        if (isFirst){
+            this.driver.findElement(By.xpath(getElement.CUSTOM_XPATH)).click();
+            Thread.sleep(2000);
+        }
+        this.driver.findElement(By.xpath(finalXpath)).click();
         Thread.sleep(3000);
     }
     //找到最终客户frame
-    public void Final_iframe(){
-        WebElement rc=this.driver.findElement(By.xpath(getElement.FINAL_FRAME_XPATH));
+    public void Final_iframe(String finalFrameXpath){
+        WebElement rc=this.driver.findElement(By.xpath(finalFrameXpath));
         driver.switchTo().frame(rc);
     }
     //退出登录
@@ -109,41 +123,116 @@ public class CustomerPage {
         return text;
     }
     //新建客户
-    public  void CreateCustom(String name) throws InterruptedException{
+    public  void CreateCustom(String name,String createType) throws InterruptedException{
         //新建客户
         Thread.sleep(2000);
         driver.findElement(By.id("Name")).sendKeys(name);
         //选择框，选择数据
-        new Select(driver.findElement(By.id("ParentCustomer"))).selectByVisibleText("nana");
-        new Select(driver.findElement(By.id("Level"))).selectByVisibleText("大客户");
+        if (createType.equals("新建管理机构")){
+            new Select(driver.findElement(By.id("ParentCustomer"))).selectByVisibleText("柯达");
+            driver.findElement(By.id("Level")).sendKeys("hahahaA");
+            SelectPerson("教育行业部","张健");
+        }else if (createType.equals("新建客户")){
+            new Select(driver.findElement(By.id("ParentCustomer"))).selectByVisibleText("nana");
+            new Select(driver.findElement(By.id("Level"))).selectByVisibleText("大客户");
+            SelectPerson("总监室","汪名亮");
+        }
+
         SelectIndustry("教育","教育");
         SelecteAdress("上海","上海","徐汇");
         driver.findElement(By.id("AddressDetail")).sendKeys("450号");
         driver.findElement(By.id("Telephone")).sendKeys("18756598745");
-        SelectPerson("总监室","汪名亮");
+
         driver.findElement(By.id("CompanyWebsite")).sendKeys("hhhhhhhhhhhhhh");
         driver.findElement(By.id("BriefIntroduction")).sendKeys("xdgnkdsndfksdfsdf");
         driver.findElement(By.id("Remark")).sendKeys("hshhshshshshhshhsh");
         driver.findElement(By.id("btn_save")).click();
 
     }
+    //
+    public void CreateCustom1(String name,String selectType,String customerFrame,String finaPage,String finalFrame,boolean isFirst)throws Exception{
+        String newName;
+        newName=name;
+        Final_page(finaPage,isFirst);
+        Final_iframe(finalFrame);
+        int i=0;
+        driver.findElement(By.xpath("//*[@id='form1']/div[3]/div[3]/div[1]/button[2]")).click();
+        //点击的新建按钮的名字
+        String type=driver.findElement(By.xpath("//*[@id='form1']/div[3]/div[3]/div[1]/button[2]")).getText();
+        //新建管理机构
+        WebElement rc1 = driver.findElement(By.xpath(customerFrame));
+        driver.switchTo().frame(rc1);
+        Thread.sleep(2000);
+        //新建客户
+//        Thread.sleep(2000);
+        driver.findElement(By.id("Name")).sendKeys(name);
+        //选择框，选择数据
+        if (type.equals("新建管理机构")){
+            new Select(driver.findElement(By.id("ParentCustomer"))).selectByVisibleText("柯达");
+            driver.findElement(By.id("Level")).sendKeys("hahahaA");
+        }else if (type.equals("新建客户")){
+            new Select(driver.findElement(By.id("ParentCustomer"))).selectByVisibleText("nana");
+            new Select(driver.findElement(By.id("Level"))).selectByVisibleText("大客户");
+        }
+        else if (type.equals("新建咨设机构")){
+            new Select(driver.findElement(By.id("ParentCustomer"))).selectByVisibleText("咨设机构");
+            driver.findElement(By.id("Level")).sendKeys("中型机构");
+        }
+        else if (type.equals("新建上下友商")){
+            new Select(driver.findElement(By.id("Level"))).selectByVisibleText("大");
+        }
+        SelectIndustry("教育","教育");
+        SelecteAdress("上海","上海","徐汇");
+        driver.findElement(By.id("AddressDetail")).sendKeys("450号");
+        SelectPerson("总监室","汪名亮");
+        driver.findElement(By.id("CompanyWebsite")).sendKeys("hhhhhhhhhhhhhh");
+        driver.findElement(By.id("BriefIntroduction")).sendKeys("xdgnkdsndfksdfsdf");
+        driver.findElement(By.id("Remark")).sendKeys("hshhshshshshhshhsh");
+        driver.findElement(By.id("btn_save")).click();
+        Thread.sleep(2000);
+        By el = By.xpath("//*[@id='alertdiv']");
+        while (isElementPresent(driver, el)) {
+            i++;
+            driver.findElement(By.xpath("//*[@id='alertdiv']/i[2]")).click();
+            driver.findElement(By.id("Name")).clear();
+            driver.findElement(By.id("Name")).sendKeys(name+i);
+            driver.findElement(By.id("btn_save")).click();
+            Thread.sleep(2000);
+            newName=name+i;
+        }
+        //切换到可以找到管理机构的frame
+        Final_iframe(finalFrame);
+        new Select(driver.findElement(By.xpath("//*[@id='ddr_effective']"))).selectByVisibleText(selectType);
+        Thread.sleep(3000);
+        driver.findElement(By.xpath("//*[@id='form1']/div[3]/div[3]/div[1]/button[1]")).click();
+        WebElement EL= driver.findElement(By.xpath("//*[@id='search_name']"));
+        EL.sendKeys(newName);
+        EL.sendKeys(Keys.ENTER);
+        Thread.sleep(2000);
+        //判断新建客户是否存在
+        String finalName=driver.findElement(By.xpath("//*[@id='tablebody']/tr[1]/td[2]/span")).getText();
+        assertEquals(finalName,newName);
+        Thread.sleep(2000);
+    }
     //删除客户
-    public String DeleteCustomer(int i) throws InterruptedException{
+    public String[]  DeleteCustomer(int i) throws InterruptedException{
         if (i%16==0||i>16){
             for (int j=1;j<=i/16;j++){
                 this.driver.findElement(By.xpath(getElement.MOREDATA_XPATH)).click();
             }
         }
-        String str=String.format("(//input[@type='checkbox'])[%d]",i);
-//        System.out.println(str);
-        this.driver.findElement(By.xpath(str)).click();
-        this.driver.findElement(By.cssSelector(getElement.DELETEBTN_CSS)).click();
-        this.driver.findElement(By.cssSelector(getElement.DELETECOM_CSS)).click();
-        Thread.sleep(2000);
-        String alterTitle=driver.findElement(By.xpath(getElement.DELETEALT_XPATH)).getText();
-        driver.findElement(By.xpath(getElement.ALTCLOSE_XPATH)).click();
-        Thread.sleep(3000);
-        return alterTitle;
+            String str=String.format("//*[@id='tablebody']/tr[%d]/td[1]/input[1]",i);
+            System.out.println(String.format("//*[@id='tablebody']/tr[%d]/td[2]/span",i));
+            String str1=driver.findElement(By.xpath(String.format("//*[@id='tablebody']/tr[%d]/td[2]/span",i))).getText();
+            this.driver.findElement(By.xpath(str)).click();
+            this.driver.findElement(By.cssSelector(getElement.DELETEBTN_CSS)).click();
+            this.driver.findElement(By.cssSelector(getElement.DELETECOM_CSS)).click();
+            Thread.sleep(2000);
+            String alterTitle=driver.findElement(By.xpath(getElement.DELETEALT_XPATH)).getText();
+            driver.findElement(By.xpath(getElement.ALTCLOSE_XPATH)).click();
+            Thread.sleep(3000);
+            String[] title={alterTitle,str1};
+            return title;
     }
     //移交客户
     public By HandoverSelect(int i) throws InterruptedException{
@@ -175,11 +264,12 @@ public class CustomerPage {
         Actions actions = new Actions(driver);
         actions.moveToElement(from_inpox).click().perform();
         driver.findElement(By.xpath(getElement.HAND_INPUTTEXT_XPATH)).click();
-
         Thread.sleep(2000);
         driver.findElement(By.id("RelatedBusiness_0")).click();
         driver.findElement(By.id("RelatedBusiness_1")).click();
         driver.findElement(By.xpath("//*[@id='form1']/div[4]/button[2]")).click();
+        driver.findElement(By.xpath("html/body/div[4]/div[4]/div/button[1]")).click();
+
         Thread.sleep(2000);
     }
     //编辑客户
@@ -200,8 +290,6 @@ public class CustomerPage {
         driver.findElement(By.xpath(getElement.CONTANCT_BEN_XPATH)).click();
         Thread.sleep(2000);
         //新建联系人
-//        WebElement el1=driver.findElement(By.className(getElement.CONTANCT_IFRAME_XPATH));
-//        driver.switchTo().frame(el1);
         By el=By.className(getElement.CONTANCT_IFRAME_XPATH);
         return el;
     }
@@ -225,8 +313,6 @@ public class CustomerPage {
         new Select(driver.findElement(By.id(getElement.DEPARTMENT_ID))).selectByVisibleText(department);
         Thread.sleep(2000);
         new Select(driver.findElement(By.id(getElement.PERSON_ID))).selectByVisibleText(person);
-
-
     }
     //判断页面该元素是否存在，NoSuchElementException不管用
     public   boolean isElementPresent(WebDriver driver,By el) {

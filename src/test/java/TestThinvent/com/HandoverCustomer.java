@@ -1,14 +1,12 @@
 package TestThinvent.com;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.interactions.Actions;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+import page.com.CustomerPage;
+
 import java.util.concurrent.TimeUnit;
 import static org.testng.Assert.assertEquals;
 
@@ -19,7 +17,7 @@ public class HandoverCustomer {
     private WebDriver driver;
     private String baseUrl;
     private CustomerPage page;
-    @Before
+    @BeforeTest
     public void setUp() throws Exception{
         driver=new ChromeDriver();
         baseUrl="http://192.168.64.222:8088/login.aspx";
@@ -33,8 +31,8 @@ public class HandoverCustomer {
     @Test
     public void handoverCustomer() throws Exception {
         //进入渠道-最终客户
-        page.Final_page();
-        page.Final_iframe();
+        page.Final_page(CustomerPage.getElement.FINAL_XPATH,true);
+        page.Final_iframe(CustomerPage.getElement.FINAL_FRAME_XPATH);
         int i=2;
        By el= page.HandoverSelect(i);
         //判断界面是否有提示信息
@@ -51,9 +49,8 @@ public class HandoverCustomer {
             //移交
             page.HandOver();
         }
-
     }
-    @After
+    @AfterTest
     public void tearDown(){
         driver.quit();
     }
