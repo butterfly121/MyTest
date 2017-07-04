@@ -2,11 +2,13 @@ package TestThinvent.com;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-import page.com.CustomerPage;
+import org.testng.annotations.*;
+//import page.com.CustomerPage;
+import page.com.DeleteCsPage;
+import page.com.HandOverPage;
 import page.com.InquiriesPage;
+import page.com.Loginpage;
+
 import java.util.concurrent.TimeUnit;
 import static org.testng.Assert.*;
 /**
@@ -15,31 +17,34 @@ import static org.testng.Assert.*;
 public class FinalInquiries {
     private WebDriver driver;
     private String baseUrl;
-    private CustomerPage page;
+    private Loginpage loginpage;
     private String username;
     private InquiriesPage inquirPage;
-    @BeforeTest
+    private HandOverPage handOverPage;
+    @BeforeClass
     public void setUp() throws Exception{
         driver=new ChromeDriver();
         baseUrl="http://192.168.64.222:8088/login.aspx";
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
-        this.page=new CustomerPage(this.driver,baseUrl);
-        page.login("huxuan","111111");
+        this.loginpage=new Loginpage(this.driver);
+        handOverPage=new HandOverPage(this.driver);
+        driver.get(baseUrl);
+        loginpage.login("huxuan","111111");
         Thread.sleep(3000);
-        username=page.user();
+        username=loginpage.user();
         assertEquals(username,"胡轩");
     }
     @Test
     public void Inquiries() throws Exception{
-        page.Final_page(CustomerPage.getElement.FINAL_XPATH,true);
-        page.Final_iframe(CustomerPage.getElement.FINAL_FRAME_XPATH);
+        loginpage.Final_page(Loginpage.getElement.FINAL_XPATH,true);
+        loginpage.Final_iframe(Loginpage.getElement.FINAL_FRAME_XPATH);
         String name=driver.findElement(By.xpath("//*[@id='form1']/div[3]/div[1]/ul/li[2]")).getText();
         assertEquals(name,"最终客户");
         inquirPage=new InquiriesPage(driver);
+        //筛选框筛选
+        inquirPage.quiryFinal("我负责的最终客户","选择领域","选择行业","缓存客户");
         //验证是否默认是我负责的客户展示
         inquirPage.isPersonIncharge(username);
-        //筛选框筛选
-        inquirPage.quiryFinal("我负责的最终客户","金融","银行","缓存客户");
         inquirPage.quiryFinal("我负责的最终客户","选择领域","选择行业","有效客户");
         inquirPage.quiryFinal("我参与的最终客户","军警","部队","缓存客户");
         inquirPage.quiryFinal("我参与的最终客户","选择领域","选择行业","有效客户");
@@ -72,35 +77,36 @@ public class FinalInquiries {
         //新建客户验证新建客户弹框是否弹出
         driver.findElement(By.xpath("//*[@id='form1']/div[3]/div[3]/div[1]/button[2]")).click();
         By el=By.xpath("html/body/div[4]/div[3]/iframe");
-        assertTrue(page.isElementPresent(driver,el));
+        assertTrue(loginpage.isElementPresent(driver,el));
         driver.findElement(By.cssSelector(".zeromodal-close")).click();
         Thread.sleep(2000);
         //移交客户
         int i=2;
-        By handel= page.HandoverSelect(i);
+        By handel= handOverPage.HandoverSelect(i);
         //判断界面是否有提示信息
-        while (page.isElementPresent(driver,handel)){
+        while (loginpage.isElementPresent(driver,handel)){
             //取消选中
-            page.HandoverUnSelect(i);
+            handOverPage.HandoverUnSelect(i);
             i++;
             //选中移交
-            el= page.HandoverSelect(i);
+            el= handOverPage.HandoverSelect(i);
         }
         //判断页面是否有新的元素
-        By el1=page.HandovergetElement();
-        assertTrue(page.isElementPresent(driver,el1));
-        if (page.isElementPresent(driver,el1)){
+        By el1=handOverPage.HandovergetElement();
+        assertTrue(loginpage.isElementPresent(driver,el1));
+        if (loginpage.isElementPresent(driver,el1)){
             driver.findElement(By.cssSelector(".zeromodal-close")).click();
         }
         //删除客户
         inquirPage.quiryFinal("我下属的最终客户","选择领域","选择行业","缓存客户");
         int j=1;
-        String[] arry=page.DeleteCustomer(j);
+        DeleteCsPage deleteCsPage=new DeleteCsPage(driver);
+        String[] arry=deleteCsPage.DeleteCustomer(j);
         String alterTitle=arry[0];
         String finalName=arry[1];
         while (!alterTitle.equals("删除成功!")){
             i++;
-            arry=page.DeleteCustomer(j);
+            arry=deleteCsPage.DeleteCustomer(j);
             alterTitle=arry[0];
             finalName=arry[1];
         }
@@ -108,11 +114,11 @@ public class FinalInquiries {
     public void isPersonIncharge(){
         By el=By.xpath("//*[@id='tablebody']/tr[1]/td[9]");
         String personcharge=driver.findElement(el).getText();
-        if (page.isElementPresent(driver,el)){
+        if (loginpage.isElementPresent(driver,el)){
             assertEquals(personcharge,username);
         }
     }
-    @AfterTest
+    @AfterClass
     public void tearDown(){
 
         driver.quit();

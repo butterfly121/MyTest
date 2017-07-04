@@ -11,7 +11,6 @@ import static org.testng.Assert.assertEquals;
  */
 public class InquiriesPage {
     private WebDriver driver;
-    private CustomerPage page;
     public InquiriesPage(WebDriver driver){
         this.driver=driver;
     }

@@ -1,0 +1,24 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite  name="Suite1" verbose="1" parallel="classes" thread-count="5" >
+    <listeners>
+        <listener class-name="Toos.TestNGListenerScreen" />
+        <!--<listener class-name="Toos.TestNGListener" />-->
+        <listener class-name="Toos.RetryListener"/>
+    </listeners>
+    <test name="渠道-最终客户" preserve-order="true">
+        <classes>
+            <!--<class name="TestThinvent.com.testLogin"/>-->
+            <class name="TestThinvent.com.CreateCustomer"/>
+            <class name="ManagementOrganization.com.CreateOrganization"/>
+            <class name="ManagementOrganization.com.CreateZishe"/>
+            <class name="ManagementOrganization.com.CreateDaili"/>
+            <class name="ManagementOrganization.com.CreateYoushang"/>
+            <!--<class name="TestThinvent.com.RevisionCustomer"/>-->
+            <!--<class name="TestThinvent.com.newContact"/>-->
+            <!--<class name="TestThinvent.com.DeleteCustomer"/>-->
+            <!--<class name="TestThinvent.com.HandoverCustomer"/>-->
+            <!--<class name="TestThinvent.com.FinalInquiries"/>-->
+        </classes>
+
+    </test>
+</suite>
